@@ -12,6 +12,7 @@ ACCESS_TOKEN = os.getenv("ACCESS_TOKEN")
 ACCESS_TOKEN_SECRET = os.getenv("ACCESS_TOKEN_SECRET")
 
 PORT = os.getenv("PORT", 4000)
+API_KEY = os.getenv("API_KEY")
 
 client = tweepy.Client(
     consumer_key=CONSUMER_KEY,
@@ -19,6 +20,11 @@ client = tweepy.Client(
     access_token=ACCESS_TOKEN,
     access_token_secret=ACCESS_TOKEN_SECRET
 )
+
+@app.before_request
+def before_request():
+    if request.headers.get('API-Key') != API_KEY:
+        return jsonify({"error": "Unauthorized"}), 403
 
 @app.route('/post_thread', methods=['POST'])
 def post_thread():
