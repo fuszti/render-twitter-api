@@ -6,10 +6,9 @@ import os
 app = Flask(__name__)
 
 # Load Twitter API credentials from environment variables
-CLIENT_ID = os.getenv("CLIENT_ID")
-CLIENT_SECRET = os.getenv("CLIENT_SECRET")
+BEARER_TOKEN = os.getenv("BEARER_TOKEN")
 
-auth = tweepy.AppAuthHandler(CLIENT_ID, CLIENT_SECRET)
+auth = tweepy.BearerTokenAuthHandler(BEARER_TOKEN)
 api = tweepy.API(auth)
 
 @app.route('/post_thread', methods=['POST'])
@@ -42,4 +41,3 @@ def post_thread():
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
-
