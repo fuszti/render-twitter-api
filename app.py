@@ -6,10 +6,17 @@ import os
 app = Flask(__name__)
 
 # Load Twitter API credentials from environment variables
-BEARER_TOKEN = os.getenv("BEARER_TOKEN")
+CONSUMER_KEY = os.getenv("CONSUMER_KEY")
+CONSUMER_SECRET = os.getenv("CONSUMER_SECRET")
+ACCESS_TOKEN = os.getenv("ACCESS_TOKEN")
+ACCESS_TOKEN_SECRET = os.getenv("ACCESS_TOKEN_SECRET")
 
-auth = tweepy.BearerTokenAuthHandler(BEARER_TOKEN)
-api = tweepy.API(auth)
+client = tweepy.Client(
+    consumer_key=CONSUMER_KEY,
+    consumer_secret=CONSUMER_SECRET,
+    access_token=ACCESS_TOKEN,
+    access_token_secret=ACCESS_TOKEN_SECRET
+)
 
 @app.route('/post_thread', methods=['POST'])
 def post_thread():
@@ -29,11 +36,11 @@ def post_thread():
         tweet_text = tweet["tweet"]
 
         if last_tweet_id is None:
-            new_tweet = api.update_status(status=tweet_text)
+            new_tweet = client.create_tweet(text=tweet_text)
         else:
-            new_tweet = api.update_status(status=tweet_text, in_reply_to_status_id=last_tweet_id, auto_populate_reply_metadata=True)
+            new_tweet = client.create_tweet(text=tweet_text, in_reply_to_tweet_id=last_tweet_id)
 
-        last_tweet_id = new_tweet.id
+        last_tweet_id = new_tweet[0]['id']
 
         time.sleep(duration_between_tweets)
     
