@@ -24,7 +24,21 @@ client = tweepy.Client(
 @app.before_request
 def before_request():
     if request.headers.get('API-Key') != API_KEY:
+        print(f"Unauthorized request with API key: {request.headers.get('API-Key')}")
+        print(f"Expected API key: {API_KEY}")
         return jsonify({"error": "Unauthorized"}), 403
+    
+@app.route('/tweet', methods=['POST'])
+def post_single_tweet():
+    data = request.get_json()
+    tweet = data.get("tweet", "")
+
+    if not tweet:
+        return jsonify({"error": "Tweet content is empty"}), 400
+
+    client.create_tweet(text=tweet)
+
+    return jsonify({"message": "Tweet posted successfully"}), 200
 
 @app.route('/post_thread', methods=['POST'])
 def post_thread():
