@@ -24,8 +24,6 @@ client = tweepy.Client(
 @app.before_request
 def before_request():
     if request.headers.get('API-Key') != API_KEY:
-        print(f"Unauthorized request with API key: {request.headers.get('API-Key')}")
-        print(f"Expected API key: {API_KEY}")
         return jsonify({"error": "Unauthorized"}), 403
     
 @app.route('/tweet', methods=['POST'])
